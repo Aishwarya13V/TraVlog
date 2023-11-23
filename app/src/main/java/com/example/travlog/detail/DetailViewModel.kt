@@ -20,7 +20,7 @@ class DetailViewModel(
         get() =repository.hasUser()
 
     private val user:FirebaseUser?
-        get() = repository.user
+        get() = repository.user()
 
     fun onTitleChange(title: String){
         detailUiState = detailUiState.copy(title = title)

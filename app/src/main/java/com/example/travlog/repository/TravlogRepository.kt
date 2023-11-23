@@ -15,7 +15,7 @@ const val TRAVLOG_COLLECTION_REF = "travlogs"
 
 class TravlogRepository(){
 
-    val user = Firebase.auth.currentUser
+    fun user() = Firebase.auth.currentUser
     fun hasUser(): Boolean = Firebase.auth.currentUser != null
 
     fun getUserId(): String = Firebase.auth.currentUser?.uid.orEmpty()
@@ -114,6 +114,8 @@ class TravlogRepository(){
                 onResult(it.isSuccessful)
             }
     }
+
+    fun signOut() = Firebase.auth.signOut()
 
 }
 
