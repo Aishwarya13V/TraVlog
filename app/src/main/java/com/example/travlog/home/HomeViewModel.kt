@@ -11,7 +11,7 @@ import com.example.travlog.repository.TravlogRepository
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val repository: TravlogRepository
+    private val repository: TravlogRepository = TravlogRepository()
 ): ViewModel() {
     var homeUiState by mutableStateOf(HomeUiState())
     val  user = repository.user()

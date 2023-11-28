@@ -11,7 +11,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 
 class DetailViewModel(
-    private val repository: TravlogRepository
+    private val repository: TravlogRepository = TravlogRepository()
 ):ViewModel() {
     var detailUiState by mutableStateOf(DetailUiState())
         private set

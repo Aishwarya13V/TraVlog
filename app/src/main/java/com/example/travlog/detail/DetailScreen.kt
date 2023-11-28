@@ -1,6 +1,7 @@
 package com.example.travlog.detail
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,7 +57,7 @@ fun DetailScreen(
 
     val isTravlogIdNotBlank = travlogId.isNotBlank()
 
-    val icon = if(isFormNotBlank) Icons.Default.Refresh
+    val icon = if(isTravlogIdNotBlank) Icons.Default.Refresh
             else Icons.Default.Check
 
     LaunchedEffect(key1 = Unit){
@@ -110,14 +111,16 @@ fun DetailScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                if(isTravlogIdNotBlank){
-                    detailViewModel?.updateTravlog(travlogId)
-                }else{
-                    detailViewModel?.addTravlog()
-                }
-            }) {
+            AnimatedVisibility(visible = isFormNotBlank) {
+                FloatingActionButton(onClick = {
+                    if(isTravlogIdNotBlank){
+                        detailViewModel?.updateTravlog(travlogId)
+                    }else{
+                        detailViewModel?.addTravlog()
+                    }
+                }) {
                     Icon(imageVector = icon, contentDescription = null)
+                }
             }
         }
     ) { padding ->
