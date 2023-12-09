@@ -2,7 +2,7 @@
 
 package com.example.travlog.login
 
-import android.graphics.Color
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,11 +27,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.travlog.R
 import com.example.travlog.ui.theme.TraVlogTheme
 
 @Composable
@@ -42,25 +46,36 @@ fun LoginScreen(
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.loginError != null
     val context = LocalContext.current
-    
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
+        logo()
+
         Text(
-            text = "Login",
+            text = "with",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.secondary
+        )
+
+        Text(
+            text = "TraVlog",
             style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary
+            fontWeight = FontWeight.ExtraBold,
+            color =  Color(0xFF6650a4)
         )
 
         if(isError){
             Text(
                 text = loginUiState?.loginError ?: "Unknown Error",
-                color = androidx.compose.ui.graphics.Color.Red
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(8.dp)
             )
         }
-        
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,19 +113,30 @@ fun LoginScreen(
             isError = isError
         )
 
-        Button(onClick = { loginViewModel?.loginUser(context) }) {
+        Button(
+            onClick = { loginViewModel?.loginUser(context) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor =  Color(0xFF6650a4)
+            )
+        ) {
             Text(text = "Sign In")
         }
-        
+
         Spacer(modifier = Modifier.size(16.dp))
-        
+
+        Text(text = "Don't have an account? Sign Up to TraVlog now!")
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement =  Arrangement.Center
         ) {
-            Text(text = "Create an account")
-            Spacer(modifier = Modifier.size(8.dp))
-            TextButton(onClick = { onNavToSignUpPage.invoke() }) {
+
+            TextButton(
+                onClick = { onNavToSignUpPage.invoke() },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor =  Color(0xFF6650a4),
+                    containerColor = Color.Transparent
+                )
+            ) {
                 Text(text = "Sign Up")
             }
 
@@ -143,11 +169,13 @@ fun SignUpScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        logo()
+
         Text(
             text = "Sign up",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary
+            color = Color(0xFF6650a4)
         )
 
         if(isError){
@@ -213,19 +241,31 @@ fun SignUpScreen(
             isError = isError
         )
 
-        Button(onClick = { loginViewModel?.createUser(context) }) {
+        Button(
+            onClick = { loginViewModel?.createUser(context) },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF6650a4)
+            )
+        ) {
             Text(text = "Sign Up")
         }
 
         Spacer(modifier = Modifier.size(16.dp))
 
+        Text(text = "Already have an account?")
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement =  Arrangement.Center
         ) {
-            Text(text = "Already have an account")
+
             Spacer(modifier = Modifier.size(8.dp))
-            TextButton(onClick = { onNavToLoginPage.invoke() }) {
+            TextButton(
+                onClick = { onNavToLoginPage.invoke() },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor =  Color(0xFF6650a4),
+                    containerColor = Color.Transparent
+                )
+            ) {
                 Text(text = "Sign In")
             }
 
@@ -241,6 +281,17 @@ fun SignUpScreen(
             }
         }
     }
+}
+
+@Composable
+fun logo() {
+    Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "Logo",
+        modifier = Modifier
+            .size(300.dp) // Adjust the size as needed
+            .padding(10.dp)
+    )
 }
 
 
