@@ -2,9 +2,12 @@ package com.example.travlog.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +25,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,10 +49,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.travlog.R
 import com.example.travlog.models.Travlogs
 import com.example.travlog.repository.Resources
 import com.example.travlog.ui.theme.TraVlogTheme
@@ -77,15 +85,18 @@ fun Home(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { navToDetailPage.invoke() }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            FloatingActionButton(
+                onClick = { navToDetailPage.invoke() },
+                containerColor = Color(0xFF6650a4)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = Color.White)
             }
         },
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF6650a4),
+                    titleContentColor = Color.White,
                 ),
                 title = {
                     Text(
@@ -94,12 +105,33 @@ fun Home(
                         overflow = TextOverflow.Ellipsis
                     )
                 },
+                navigationIcon = {
+                    Button(
+                        onClick = { /* Your action here */ },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.logo_image), // Replace with your icon resource
+                                contentDescription = "Localized description",
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
+                    }
+                },
                 actions = {
                     IconButton(onClick = {
                         homeViewModel?.signOut()
                         navToLoginPage.invoke()
                     }) {
-                        Icon(imageVector = Icons.Default.ExitToApp, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
 
                     }
                 },
@@ -118,7 +150,7 @@ fun Home(
                 }
                 is Resources.Success -> {
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+                        columns = GridCells.Fixed(1),
                         contentPadding = PaddingValues(16.dp),
                     ){
                         items((homeUiState.travlogList.data ?: emptyList<Travlogs>()).size)
@@ -200,11 +232,17 @@ fun TravlogItem(
             )
             .padding(8.dp)
             .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFEBE2FF)
+        ),
     ){
-        Column {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
+        ) {
             Text(
                 text = travlogs.title,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
@@ -220,25 +258,8 @@ fun TravlogItem(
                 modifier = Modifier.padding(4.dp),
                 maxLines = 4
             )
-
-            Spacer(modifier = Modifier.size(4.dp))
-
-            Text(
-                text = formatDate(travlogs.createdOn),
-                style = MaterialTheme.typography.bodyMedium,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.End),
-                maxLines = 4
-            )
         }
     }
-}
-
-private fun formatDate(timestamp: com.google.firebase.Timestamp):String{
-    val sdf = SimpleDateFormat("MM-dd-yy hh:mm", Locale.getDefault())
-    return sdf.format(timestamp)
 }
 
 @Preview(showSystemUi = true)

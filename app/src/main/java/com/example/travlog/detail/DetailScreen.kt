@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -81,8 +82,8 @@ fun DetailScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF6650a4),
+                    titleContentColor = Color.White,
                 ),
                 title = {
                     Text(
@@ -92,35 +93,37 @@ fun DetailScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { onNavigate.invoke() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            contentDescription = "Localized description",
+                            tint = Color.White
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
+                    if (isTravlogIdNotBlank) {
+                        IconButton(onClick = { detailViewModel?.deleteTravlog(travlogId) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Localized description",
+                                tint = Color.White
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
-            AnimatedVisibility(visible = isFormNotBlank) {
-                FloatingActionButton(onClick = {
-                    if(isTravlogIdNotBlank){
-                        detailViewModel?.updateTravlog(travlogId)
-                    }else{
-                        detailViewModel?.addTravlog()
-                    }
-                }) {
-                    Icon(imageVector = icon, contentDescription = null)
+            FloatingActionButton(onClick = {
+                if(isTravlogIdNotBlank){
+                    detailViewModel?.updateTravlog(travlogId)
+                }else{
+                    detailViewModel?.addTravlog()
                 }
+            }, containerColor = Color(0xFF6650a4)) {
+                Icon(imageVector = icon, contentDescription = null, tint = Color.White)
             }
         }
     ) { padding ->
@@ -140,6 +143,13 @@ fun DetailScreen(
             if(detailUiState.updateTravlogStatus){
                 scope.launch {
                     snackbarHostState.showSnackbar("TraVlog Updated Successfully")
+                    detailViewModel?.resetTravlogAddedStatus()
+                    onNavigate.invoke()
+                }
+            }
+            if(detailUiState.deleteTravlogStatus){
+                scope.launch {
+                    snackbarHostState.showSnackbar("TraVlog Deleted Successfully")
                     detailViewModel?.resetTravlogAddedStatus()
                     onNavigate.invoke()
                 }

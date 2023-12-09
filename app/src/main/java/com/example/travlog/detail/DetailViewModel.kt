@@ -73,6 +73,12 @@ class DetailViewModel(
         }
     }
 
+    fun deleteTravlog(travlogId: String) {
+        repository.deleteTravlog(travlogId){
+            detailUiState = detailUiState.copy(deleteTravlogStatus = it)
+        }
+    }
+
     fun resetTravlogAddedStatus(){
         detailUiState = detailUiState.copy(
             travlogAddedStatus = false,
@@ -91,5 +97,6 @@ data class DetailUiState(
     val description:String = "",
     val travlogAddedStatus:Boolean = false,
     val updateTravlogStatus:Boolean = false,
+    val deleteTravlogStatus:Boolean = false,
     val selectedTravlog: Travlogs? = null
 )

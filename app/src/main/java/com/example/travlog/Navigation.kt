@@ -59,17 +59,18 @@ fun NavGraphBuilder.authGraph(
         route = NestedRoutes.Login.name
     ){
         composable(route = LoginRoutes.SignIn.name){
-            LoginScreen(onNavToHomepage = {
-                navController.navigate(HomeRoutes.Home.name){
-                    launchSingleTop = true
-                    popUpTo(route = LoginRoutes.SignIn.name){
-                        inclusive = true
+            LoginScreen(
+                onNavToHomepage = {
+                    navController.navigate(HomeRoutes.Home.name){
+                        launchSingleTop = true
+                        popUpTo(route = LoginRoutes.SignIn.name){
+                            inclusive = true
+                        }
                     }
-                }
-            },
+                },
                 loginViewModel = loginViewModel
             ) {
-                navController.navigate(NestedRoutes.Main.name){
+                navController.navigate(LoginRoutes.SignUp.name){
                     launchSingleTop = true
                     popUpTo(LoginRoutes.SignIn.name){
                         inclusive = true
