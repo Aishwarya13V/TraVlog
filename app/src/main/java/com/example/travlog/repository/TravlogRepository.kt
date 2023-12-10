@@ -1,17 +1,20 @@
 package com.example.travlog.repository
 
 import android.icu.text.CaseMap.Title
+import android.net.Uri
 import com.example.travlog.models.Travlogs
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 const val TRAVLOG_COLLECTION_REF = "travlogs"
+const val STORAGE_IMAGES_REF = "images"
 
 class TravlogRepository(){
 
@@ -22,6 +25,8 @@ class TravlogRepository(){
 
     private val travlogRef = Firebase
         .firestore.collection(TRAVLOG_COLLECTION_REF)
+
+    private val storageRef = Firebase.storage.reference.child(STORAGE_IMAGES_REF)
 
     fun getUserTravlogs(
         userId:String
@@ -69,25 +74,48 @@ class TravlogRepository(){
         userId: String,
         title: String,
         description: String,
-        image: String,
+        imageUri: Uri,
         createdOn: Timestamp,
         onComplete:(Boolean) -> Unit,
     ){
         val documentId = travlogRef.document().id
-        val travlog = Travlogs(
-            userId,
-            title,
-            description,
-            image,
-            createdOn,
-            documentId = documentId,
-        )
-        travlogRef
-            .document(documentId)
-            .set(travlog)
-            .addOnCompleteListener{ result ->
-                onComplete.invoke(result.isSuccessful)
+
+        // Upload image to Firebase Storage
+        val imageRef = storageRef.child("${documentId}_image")
+        val uploadTask = imageRef.putFile(imageUri)
+
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
             }
+            imageRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val imageDownloadUrl = task.result.toString()
+
+                // Create Travlogs object with image download URL
+                val travlog = Travlogs(
+                    userId,
+                    title,
+                    description,
+                    imageDownloadUrl,
+                    createdOn,
+                    documentId = documentId,
+                )
+
+                // Add Travlog to Firestore
+                travlogRef
+                    .document(documentId)
+                    .set(travlog)
+                    .addOnCompleteListener { result ->
+                        onComplete.invoke(result.isSuccessful)
+                    }
+            } else {
+                onComplete.invoke(false)
+            }
+        }
     }
 
     fun deleteTravlog(travlogId: String, onComplete: (Boolean) -> Unit){
@@ -95,6 +123,8 @@ class TravlogRepository(){
             .delete()
             .addOnCompleteListener{
                 onComplete.invoke(it.isSuccessful)
+                val imageRef = storageRef.child("${travlogId}_image")
+                imageRef.delete()
             }
     }
 

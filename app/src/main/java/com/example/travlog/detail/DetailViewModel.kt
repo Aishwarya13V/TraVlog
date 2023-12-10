@@ -1,5 +1,6 @@
 package com.example.travlog.detail
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,14 +33,16 @@ class DetailViewModel(
 
     fun addTravlog(){
         if(hasUser){
-            repository.addTravlog(
-                userId = user!!.uid,
-                title = detailUiState.title,
-                description = detailUiState.description,
-                image = "",
-                createdOn = Timestamp.now()
-            ){
-                detailUiState = detailUiState.copy(travlogAddedStatus = it)
+            detailUiState.imageUri?.let {
+                repository.addTravlog(
+                    userId = user!!.uid,
+                    title = detailUiState.title,
+                    description = detailUiState.description,
+                    imageUri = it,
+                    createdOn = Timestamp.now()
+                ){
+                    detailUiState = detailUiState.copy(travlogAddedStatus = it)
+                }
             }
         }
     }
@@ -47,7 +50,8 @@ class DetailViewModel(
     fun setEditFields(travlog: Travlogs){
         detailUiState = detailUiState.copy(
             title = travlog.title,
-            description = travlog.description
+            description = travlog.description,
+            imageUri = Uri.parse(travlog.image)
         )
     }
 
@@ -95,6 +99,7 @@ class DetailViewModel(
 data class DetailUiState(
     val title:String = "",
     val description:String = "",
+    var imageUri: Uri? = null,
     val travlogAddedStatus:Boolean = false,
     val updateTravlogStatus:Boolean = false,
     val deleteTravlogStatus:Boolean = false,
