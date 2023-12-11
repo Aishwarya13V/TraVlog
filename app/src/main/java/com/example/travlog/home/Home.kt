@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -177,6 +178,23 @@ fun Home(
                             }
                         }
                     }
+
+                    if (homeUiState.travlogList.data?.isEmpty() == true) {
+                        // Display a message when the list of travlogs is empty
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Start adding your travel journey by clicking the add button below!",
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.wrapContentSize()
+                            )
+                        }
+                    }
+
                     AnimatedVisibility(visible = openDialog) {
                         AlertDialog(
                             onDismissRequest = {

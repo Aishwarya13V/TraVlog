@@ -101,8 +101,11 @@ fun DetailScreen(
 
     LaunchedEffect(key1 = Unit){
         if(isTravlogIdNotBlank){
-            detailViewModel?.getTravlog(travlogId)
-            selectedImageUri = detailUiState.imageUri
+            // Use coroutine to wait for the result
+            scope.launch {
+                detailViewModel?.getTravlog(travlogId)
+                selectedImageUri = detailViewModel?.detailUiState?.imageUri ?: Uri.EMPTY
+            }
         }else{
             detailViewModel?.resetState()
         }
@@ -190,7 +193,7 @@ fun DetailScreen(
             }
 
             if(selectedImageUri != null ){
-
+                selectedImageUri = detailViewModel?.detailUiState?.imageUri ?: Uri.EMPTY
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()

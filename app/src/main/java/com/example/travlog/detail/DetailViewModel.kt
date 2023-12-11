@@ -85,8 +85,10 @@ class DetailViewModel(
 
     fun resetTravlogAddedStatus(){
         detailUiState = detailUiState.copy(
+            imageUri = null,
             travlogAddedStatus = false,
             updateTravlogStatus = false,
+            deleteTravlogStatus = false
         )
     }
 
